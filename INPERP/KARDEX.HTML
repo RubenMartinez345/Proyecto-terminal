@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Inventario de Biomédica</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    /* CSS específico para esta página */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* Estilos del encabezado */
+    header {
+      background-color: #d6108a70;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      width: 100%;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin: 0;
+    }
+
+    /* Contenedor del formulario de inicio de sesión */
+    .login-form {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 800px; /* Aumentado para mayor espacio */
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .login-form h2 {
+      margin-bottom: 20px;
+    }
+
+    .login-form label {
+      display: block;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .login-form input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 1em;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .button-container button, .button-container a {
+      background-color: #3399cc;
+      color: #fff;
+      padding: 10px 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 48%;
+      text-align: center;
+      text-decoration: none;
+      font-size: 1em;
+    }
+
+    .button-container button:hover, .button-container a:hover {
+      background-color: #2980b9;
+    }
+
+    /* Estilos específicos para la tabla */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border-radius: 10px;
+      overflow: hidden; /* Evitar que los bordes redondeados afecten a las filas */
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th, .table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .table th {
+      background-color: #ff8c00;
+      color: white;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .table tbody tr:nth-child(even) {
+      background-color: #ffe5b4;
+    }
+
+    .table tbody tr:hover {
+      background-color: #ffd699;
+    }
+
+    .button-orange {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-decoration: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .button-orange:hover {
+      background-color: #ffcc99;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Registro de Inventario de Biomédica</h1>
+  </header>
+  <div class="login-form">
+    <h2>Buscar Inventario</h2>
+    <form id="buscarForm">
+      <label for="buscar">Buscar:</label>
+      <input type="text" id="buscar" name="buscar" required>
+      <button type="submit" class="button-orange">Buscar</button>
+    </form>
+    <h2>Agregar a Inventario</h2>
+    <form id="agregarForm">
+      <label for="nombre">Nombre del Equipo:</label>
+      <input type="text" id="nombre" name="nombre" required>
+      <label for="cantidad">Cantidad:</label>
+      <input type="number" id="cantidad" name="cantidad" required>
+      <label for="ubicacion">Ubicación:</label>
+      <input type="text" id="ubicacion" name="ubicacion" required>
+      <button type="button" class="button-orange" onclick="agregarFila()">Agregar</button>
+    </form>
+    <h2>Registro de Inventario</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nombre del Equipo</th>
+          <th>Cantidad</th>
+          <th>Ubicación</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaInventario">
+        <!-- Aquí se añadirán dinámicamente las filas -->
+        <tr>
+          <td>Ejemplo Equipo</td>
+          <td>10</td>
+          <td>Laboratorio 1</td>
+          <td>
+            <button class="button-orange" onclick="eliminarFila(this)">Eliminar</button>
+            <button class="button-orange" onclick="sacarCantidad(this)">Sacar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="button-container">
+      <button class="button-orange" onclick="descargarInventario()">Descargar Inventario</button>
+    </div>
+  </div>
+
+  <script>
+    // Función para agregar una nueva fila a la tabla de inventario
+    function agregarFila() {
+      var nombre = document.getElementById('nombre').value;
+      var cantidad = document.getElementById('cantidad').value;
+      var ubicacion = document.getElementById('ubicacion').value;
+
+      var tabla = document.getElementById('tablaInventario');
+      var fila = tabla.insertRow();
+      var celdaNombre = fila.insertCell(0);
+      var celdaCantidad = fila.insertCell(1);
+      var celdaUbicacion = fila.insertCell(2);
+      var celdaAcciones = fila.insertCell(3);
+
+      celdaNombre.textContent = nombre;
+      celdaCantidad.textContent = cantidad;
+      celdaUbicacion.textContent = ubicacion;
+      celdaAcciones.innerHTML = '<button class="button-orange" onclick="eliminarFila(this)">Eliminar</button>' +
+                                '<button class="button-orange" onclick="sacarCantidad(this)">Sacar</button>';
+
+      // Limpiar campos del formulario
+      document.getElementById('nombre').value = '';
+      document.getElementById('cantidad').value = '';
+      document.getElementById('ubicacion').value = '';
+    }
+
+    // Función para eliminar una fila de la tabla de inventario
+    function eliminarFila(boton) {
+      var fila = boton.parentNode.parentNode;
+      fila.parentNode.removeChild(fila);
+    }
+
+    // Función para sacar una unidad de la cantidad en la tabla de inventario
+    function sacarCantidad(boton) {
+      var fila = boton.parentNode.parentNode;
+      var cantidadActual = parseInt(fila.cells[1].textContent);
+      if (cantidadActual > 0) {
+        fila.cells[1].textContent = cantidadActual - 1;
+      }
+    }
+
+    // Función para buscar y filtrar las filas de la tabla
+    document.getElementById('buscarForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var textoBusqueda = document.getElementById('buscar').value.trim().toLowerCase();
+      var filas = document.getElementById('tablaInventario').getElementsByTagName('tr');
+
+      for (var i = 0; i < filas.length; i++) {
+        var nombreFila = filas[i].getElementsByTagName('td')[0];
+        if (nombreFila) {
+          var textoFila = nombreFila.textContent.trim().toLowerCase();
+          if (textoFila.includes(textoBusqueda)) {
+            filas[i].style.display = '';
+          } else {
+            filas[i].style.display = 'none';
+          }
+        }
+      }
+    });
+
+    // Función para descargar el inventario en formato Excel
+    function descargarInventario() {
+      var wb = XLSX.utils.table_to_book(document.getElementById('tablaInventario'), {sheet: "Inventario"});
+      return XLSX.writeFile(wb, 'inventario.xlsx');
+    }
+  </script>
+</body>
+</html>
+
+
